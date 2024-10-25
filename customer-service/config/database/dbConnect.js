@@ -6,6 +6,7 @@ const dbConnect = {
         database: process.env.DEV_DB_NAME,
         host: process.env.DEV_DB_HOST,
         dialect: "postgres",
+        logging: console.log
     },
 };
 
