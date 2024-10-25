@@ -16,14 +16,14 @@ class RequestHandler {
         return response.status(successCode).send(responseData);
     }
 
-    static errorHandler({request, response, data = null, error, code}) {
-        const responseData = { message: error?.toString() || 'Internal Server Error', data, status: 'failed' };
+    static errorHandler({ request, response, data = null, error, code }) {
+        const responseData = { message: 'Internal Server Error', data, status: 'failed' };
         return response.status(code || 500).send(responseData);
     }
 
-    static validationHandler(request, response, data = null, error) {
-        const responseData = { message: error.toString(), data, status: 'failed' };
-        return response.status(400).send(responseData);
+    static validationHandler({ request, response, data = null, error, code }) {
+        const responseData = { message: error?.message || error.toString(), data, status: 'failed' };
+        return response.status(code || 400).send(responseData);
     }
 }
 

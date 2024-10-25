@@ -2,23 +2,24 @@ const RequestHandler = require("../handlers/request.handler");
 const ClientError = require("../errors/client.error");
 
 function errorRoutes(app) {
-    app.use((err, req, res, next) => {
-        console.error(err);
+    app.use((error, request, response, next) => {
+        console.error(error);
 
-        if (err instanceof ClientError) {
+        if (error instanceof ClientError) {
             return RequestHandler.validationHandler({
-                req,
-                res,
-                data: err.data,
-                error: err
+                request,
+                response,
+                data: error.data,
+                error: error,
+                code: error?.statusCode
             });
         } else {
             return RequestHandler.errorHandler({
-                req,
-                res,
-                data: err.data,
-                error: err,
-                code: err?.statusCode || 500
+                request,
+                response,
+                data: error.data,
+                error: error,
+                code: error?.statusCode
             });
         }
     });
