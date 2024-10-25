@@ -13,11 +13,16 @@ app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.get("/", (req, res) => {
+app.get("/health", (req, res) => {
     res.status(200).send({
-        message: "Welcome to Node Js Postgres Sequelize Server",
+        message: "Customer service is up and running",
     });
 });
+
+app.use("/customers", require("./routes/customers.routes"));
+
+// this should be the last route
+require("./routes/error.routes")(app);
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on PORT ${process.env.PORT}`);
