@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const logger = require("morgan");
 const bodyParser = require("body-parser");
+const NatsClient = require("./nats/natsClient");
 
 //set up express app
 const app = express();
@@ -30,6 +31,25 @@ app.use("/customers", require("./routes/customers.routes"));
 
 // this should be the last route
 require("./routes/error.routes")(app);
+
+async function initNats() {
+    try {
+        await NatsClient.connect();
+
+        // Subscribe to a subject
+        NatsClient.subscribe('greeting', (msg) => {
+            console.log('Nats server is online')
+        });
+
+        // Publish a message
+        await NatsClient.publish('greeting', 'Hello, NATS!');
+
+    } catch (error) {
+        console.error('Nats server cannot be connected', error);
+    }
+}
+
+initNats();
 
 app.listen(process.env.PORT, () => {
     console.log(`Server is running on PORT ${process.env.PORT}`);
