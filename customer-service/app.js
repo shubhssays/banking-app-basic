@@ -23,7 +23,7 @@ app.use((req, res, next) => {
 
 app.get("/health", (req, res) => {
     res.status(200).send({
-        message: "Customer service is up and running",
+        message: "Customer Service is up and running",
     });
 });
 
@@ -37,22 +37,22 @@ async function initNats() {
         await NatsClient.connect();
 
         // Subscribe to a subject
-        NatsClient.subscribe('greeting', (msg) => {
-            console.log('Nats server is online')
+        NatsClient.subscribe('cs', (msg) => {
+            console.log('Customer Service Nats server is online')
         });
 
         // Publish a message
-        await NatsClient.publish('greeting', 'Hello, NATS!');
+        await NatsClient.publish('cs', 'Hello, NATS!');
 
     } catch (error) {
-        console.error('Nats server cannot be connected', error);
+        console.error('Customer Service Nats server cannot be connected', error);
     }
 }
 
 initNats();
 
 app.listen(process.env.PORT, () => {
-    console.log(`Server is running on PORT ${process.env.PORT}`);
+    console.log(`Customer Service is running on PORT ${process.env.PORT}`);
 });
 
 process.on("unhandledRejection", (reason, promise) => {
