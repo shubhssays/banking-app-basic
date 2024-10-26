@@ -6,8 +6,6 @@ module.exports = {
       // Enable pgcrypto extension for UUID generation
       await queryInterface.sequelize.query('CREATE EXTENSION IF NOT EXISTS "pgcrypto";');
       
-      console.log('Starting table creation...');
-      
       // Create customers table
       await queryInterface.createTable('customers', {
         customer_id: {
