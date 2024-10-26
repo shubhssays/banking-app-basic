@@ -137,6 +137,26 @@ class CustomerService {
             customer: customer.toJSON()
         };
     }
+
+    static async deleteCustomer(userInput) {
+        const { customer_id } = userInput;
+
+        // Check if customer exists
+        const customer = await CustomersModel.findOne({
+            where: { customer_id },
+            attributes: ['customer_id']
+        });
+
+        if (!customer) {
+            throw new ClientError('Customer not found');
+        }
+
+        await customer.destroy();
+
+        return {
+            message: 'Customer deleted successfully',
+        };
+    }
 }
 
 module.exports = CustomerService;

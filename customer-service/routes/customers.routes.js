@@ -8,5 +8,6 @@ router.post('/', routeHandler(CustomerController.addCustomerHandler));
 router.get('/', routeHandler(CustomerController.getCustomerHandler));
 router.put('/', routeHandler(CustomerController.updateCustomerHandler));
 router.get('/:customer_id', routeHandler(CustomerController.getCustomerDetailsHandler));
+router.delete('/:customer_id', routeHandler(CustomerController.deleteCustomerHandler));
 
 module.exports = router;

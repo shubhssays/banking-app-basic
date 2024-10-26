@@ -25,6 +25,12 @@ class CustomerController {
         const data = await CustomerService.getCustomerDetails(validData);
         return RequestHandler.successHandler(request, reply, data);
     }
+
+    static async deleteCustomerHandler(request, reply) {
+        const validData = request.userInput;
+        const data = await CustomerService.deleteCustomer(validData);
+        return RequestHandler.successHandler(request, reply, data);
+    }
 }
 
 module.exports = CustomerController;
