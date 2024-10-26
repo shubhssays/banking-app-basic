@@ -35,4 +35,14 @@ app.listen(process.env.PORT, () => {
     console.log(`Server is running on PORT ${process.env.PORT}`);
 });
 
+process.on("unhandledRejection", (reason, promise) => {
+    console.log("Unhandled Rejection at:", promise, "reason:", reason);
+    process.exit(1);
+});
+
+process.on("uncaughtException", (error) => {
+    console.error("There was an uncaught error", error);
+    process.exit(1);
+});
+
 module.exports = app;
