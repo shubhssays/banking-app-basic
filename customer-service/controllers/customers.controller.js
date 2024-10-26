@@ -19,6 +19,12 @@ class CustomerController {
         const data = await CustomerService.updateCustomer(validData);
         return RequestHandler.successHandler(request, reply, data);
     }
+
+    static async getCustomerDetailsHandler(request, reply) {
+        const validData = request.userInput;
+        const data = await CustomerService.getCustomerDetails(validData);
+        return RequestHandler.successHandler(request, reply, data);
+    }
 }
 
 module.exports = CustomerController;

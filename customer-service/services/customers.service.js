@@ -37,7 +37,6 @@ class CustomerService {
 
         return {
             message: 'Customer added successfully',
-            customer: newCustomer.toJSON
         }
     }
 
@@ -119,6 +118,23 @@ class CustomerService {
 
         return {
             message: 'Customer updated successfully',
+        };
+    }
+
+    static async getCustomerDetails(userInput) {
+        const { customer_id } = userInput
+        // Check if customer exists
+        const customer = await CustomersModel.findOne({
+            where: { customer_id },
+        });
+
+        if (!customer) {
+            throw new ClientError('Customer not found');
+        }
+
+        return {
+            message: 'Customer details fetched successfully',
+            customer: customer.toJSON()
         };
     }
 }
