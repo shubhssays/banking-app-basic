@@ -7,36 +7,47 @@ const GeneralError = require("../errors/general.error");
 class CustomerService {
     static async addCustomer(userInput) {
         const { first_name, last_name, email, phone_number, street, city, state, zip_code, country } = userInput;
-        // Check for duplicate entry based on email and phone number
-        const existingCustomer = await CustomersModel.findOne({
-            attributes: ['customer_id'],
-            where: {
-                [Op.or]: [
-                    { email },
-                    { phone_number }
-                ]
-            },
-        });
 
-        if (existingCustomer) {
-            throw new ClientError('Customer with this email and phone number already exists');
-        }
+        const transaction = await CustomersModel.sequelize.transaction();
 
-        // Create new customer
-        const newCustomer = await CustomersModel.create({
-            first_name,
-            last_name,
-            email,
-            phone_number,
-            street,
-            city,
-            state,
-            zip_code,
-            country
-        });
+        try {
+            // Check for duplicate entry based on email and phone number
+            const existingCustomer = await CustomersModel.findOne({
+                attributes: ['customer_id'],
+                where: {
+                    [Op.or]: [
+                        { email },
+                        { phone_number }
+                    ]
+                },
+                transaction
+            });
 
-        return {
-            message: 'Customer added successfully',
+            if (existingCustomer) {
+                throw new ClientError('Customer with this email and phone number already exists');
+            }
+
+            // Create new customer
+            const newCustomer = await CustomersModel.create({
+                first_name,
+                last_name,
+                email,
+                phone_number,
+                street,
+                city,
+                state,
+                zip_code,
+                country
+            }, { transaction });
+
+            await transaction.commit();
+
+            return {
+                message: 'Customer added successfully',
+            };
+        } catch (error) {
+            await transaction.rollback();
+            throw error;
         }
     }
 
