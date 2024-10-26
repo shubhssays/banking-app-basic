@@ -36,6 +36,8 @@ async function initNats() {
     try {
         await NatsClient.connect();
 
+        require("./nats/natsListener");
+
         // Subscribe to a subject
         NatsClient.subscribe('as', (msg) => {
             console.log('Account Service Nats server is online')

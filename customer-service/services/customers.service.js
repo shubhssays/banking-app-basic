@@ -3,6 +3,7 @@ const ServerError = require("../errors/server.error");
 const CustomersModel = require("../config/models/customers.model");
 const { Op } = require('sequelize');
 const GeneralError = require("../errors/general.error");
+const NatsClient = require("../nats/natsClient");
 
 class CustomerService {
     static async addCustomer(userInput) {
@@ -40,10 +41,31 @@ class CustomerService {
                 country
             }, { transaction });
 
+            // Publish a message
+            await NatsClient.publish(process.env.NATS_TOPIC_CUSTOMER_CREATED, JSON.stringify({
+                customer_id: newCustomer.customer_id,
+            }));
+
+            // Wait for 30 seconds for account service to create account and listen to account created event
+            const accountCreated = new Promise((resolve, reject) => {
+                NatsClient.subscribe(process.env.NATS_TOPIC_CUSTOMER_CREATE_STATUS, (data) => {
+                    resolve(data);
+                }, process.env.NATS_TIMEOUT);
+            });
+
+            const accountStatus = await accountCreated;
+            const account = JSON.parse(accountStatus);
+            console.log('account', account);
+
+            if(account.status !== 'success') {
+                throw new ServerError('Error in creating account');
+            }
+            
             await transaction.commit();
 
             return {
                 message: 'Customer added successfully',
+                newCustomer
             };
         } catch (error) {
             await transaction.rollback();
