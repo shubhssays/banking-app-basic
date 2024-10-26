@@ -12,17 +12,17 @@ class RequestHandler {
         let successCode = statusCodeMapper[request.method] || 200;
         let message = data?.message || undefined;
         delete data?.message;
-        const responseData = { message, data, status: 'success' };
+        const responseData = { status: 'success', message, data, };
         return response.status(successCode).send(responseData);
     }
 
     static errorHandler({ request, response, data = null, error, code }) {
-        const responseData = { message: 'Internal Server Error', data, status: 'failed' };
-        return response.status(code || 500).send(responseData);
+        const responseData = { status: 'failed', message: error.message, data, };
+        return response.status(code).send(responseData);
     }
 
     static validationHandler({ request, response, data = null, error, code }) {
-        const responseData = { message: error?.message || error.toString(), data, status: 'failed' };
+        const responseData = { status: 'failed', message: error?.message || error.toString(), data, };
         return response.status(code || 400).send(responseData);
     }
 }
