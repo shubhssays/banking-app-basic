@@ -1,6 +1,5 @@
 const RequestHandler = require("../handlers/request.handler");
 const ClientError = require("../errors/client.error");
-const GeneralError = require("../errors/general.error");
 const ServerError = require("../errors/server.error");
 const SequelizeDatabaseError = require('sequelize').DatabaseError;
 
