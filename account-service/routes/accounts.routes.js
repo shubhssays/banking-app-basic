@@ -9,5 +9,6 @@ router.put('/add-money', schemaValidator(addMoneySchema), routeHandler(AccountCo
 router.put('/deduct-money', schemaValidator(deductMoneySchema), routeHandler(AccountController.deductMoneyHandler));
 router.get('/:account_id', schemaValidator(getAccountDetailsSchema), routeHandler(AccountController.getAccountDetailsHandler));
 router.delete('/:account_id', schemaValidator(deleteAccountSchema), routeHandler(AccountController.deleteAccountHandler));
+router.post('/', routeHandler(AccountController.createAccountHandler));
 
 module.exports = router;

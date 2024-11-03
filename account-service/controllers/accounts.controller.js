@@ -25,6 +25,12 @@ class AccountController {
         const data = await AccountService.deleteAccount(validData);
         return RequestHandler.successHandler(request, reply, data);
     }
+
+    static async createAccountHandler(request, reply) {
+        const validData = request.userInput;
+        const data = await AccountService.createAccount(validData);
+        return RequestHandler.successHandler(request, reply, data);
+    }
 }
 
 module.exports = AccountController;

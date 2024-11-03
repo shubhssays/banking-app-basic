@@ -42,7 +42,7 @@ class AccountService {
 
         // Check if account has enough balance
 
-        if (account.balance < amount) { 
+        if (account.balance < amount) {
             throw new ClientError('Insufficient balance');
         }
 
@@ -98,6 +98,34 @@ class AccountService {
 
         return {
             message: 'Account deleted successfully'
+        };
+    }
+
+    static async createAccount(userInput) {
+        const { customer_id, initial_balance = 0.00 } = userInput;
+
+        // Check if account already exists
+        const existingAccount = await AccountsModel.findOne({
+            where: { customer_id },
+            attributes: ['customer_id']
+        });
+
+        if (existingAccount) {
+            throw new ClientError('Account already exists');
+        }
+
+        // Create new account
+        const account = await AccountsModel.create({
+            customer_id,
+            balance: initial_balance
+        });
+
+        return {
+            account: {
+                account_id: account.account_id,
+                balance: account.balance,
+            },
+            message: 'Account created successfully'
         };
     }
 }

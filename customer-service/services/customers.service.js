@@ -3,7 +3,8 @@ const ServerError = require("../errors/server.error");
 const CustomersModel = require("../config/models/customers.model");
 const { Op } = require('sequelize');
 const GeneralError = require("../errors/general.error");
-const NatsClient = require("../nats/natsClient");
+const { getServiceUrl } = require('../eurekaHelper');
+const Axios = require('../utils/axios');
 
 class CustomerService {
     static async addCustomer(userInput) {
@@ -41,31 +42,28 @@ class CustomerService {
                 country
             }, { transaction });
 
-            // Publish a message
-            await NatsClient.publish(process.env.NATS_TOPIC_CUSTOMER_CREATED, JSON.stringify({
-                customer_id: newCustomer.customer_id,
-            }));
+            const accountServiceURL = await getServiceUrl(process.env.APP_ID_ACCOUNT_SERVICE);
+            console.log('accountServiceURL', accountServiceURL);
 
-            // Wait for 30 seconds for account service to create account and listen to account created event
-            const accountCreated = new Promise((resolve, reject) => {
-                NatsClient.subscribe(process.env.NATS_TOPIC_CUSTOMER_CREATE_STATUS, (data) => {
-                    resolve(data);
-                }, process.env.NATS_TIMEOUT);
+            const axios = new Axios(accountServiceURL);
+            const accountResponse = await axios.post('/accounts', {
+                customer_id: newCustomer.customer_id,
             });
 
-            const accountStatus = await accountCreated;
-            const account = JSON.parse(accountStatus);
-            console.log('account', account);
+            console.log('accountResponse', accountResponse);
 
-            if(account.status !== 'success') {
+            if (accountResponse.status != 'success') {
                 throw new ServerError('Error in creating account');
             }
-            
+
             await transaction.commit();
 
             return {
                 message: 'Customer added successfully',
-                newCustomer
+                customer: {
+                    customer_id: newCustomer.customer_id,
+                },
+                account: accountResponse.data.account
             };
         } catch (error) {
             await transaction.rollback();

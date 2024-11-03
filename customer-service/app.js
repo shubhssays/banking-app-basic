@@ -2,7 +2,6 @@ require("dotenv").config();
 const express = require("express");
 const logger = require("morgan");
 const bodyParser = require("body-parser");
-const NatsClient = require("./nats/natsClient");
 
 //set up express app
 const app = express();
@@ -14,6 +13,9 @@ app.use(logger("dev"));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+// registering app to eureka server
+require("./eurekaHelper");
+
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "*");
     res.header("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE");
@@ -21,7 +23,7 @@ app.use((req, res, next) => {
     next();
 });
 
-app.get("/health", (req, res) => {
+app.get("/health/status", (req, res) => {
     res.status(200).send({
         message: "Customer Service is up and running",
     });
@@ -31,27 +33,6 @@ app.use("/customers", require("./routes/customers.routes"));
 
 // this should be the last route
 require("./routes/error.routes")(app);
-
-async function initNats() {
-    try {
-        await NatsClient.connect();
-
-        require("./nats/natsListener");
-
-        // Subscribe to a subject
-        NatsClient.subscribe('cs', (msg) => {
-            console.log('Customer Service Nats server is online')
-        });
-
-        // Publish a message
-        await NatsClient.publish('cs', 'Hello, NATS!');
-
-    } catch (error) {
-        console.error('Customer Service Nats server cannot be connected', error);
-    }
-}
-
-initNats();
 
 app.listen(process.env.PORT, () => {
     console.log(`Customer Service is running on PORT ${process.env.PORT}`);
