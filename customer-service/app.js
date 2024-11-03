@@ -29,7 +29,7 @@ app.get("/health/status", (req, res) => {
     });
 });
 
-app.use("/customers", require("./routes/customers.routes"));
+app.use("/", require("./routes/customers.routes"));
 
 // this should be the last route
 require("./routes/error.routes")(app);

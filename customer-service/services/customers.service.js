@@ -43,14 +43,11 @@ class CustomerService {
             }, { transaction });
 
             const accountServiceURL = await getServiceUrl(process.env.APP_ID_ACCOUNT_SERVICE);
-            console.log('accountServiceURL', accountServiceURL);
 
             const axios = new Axios(accountServiceURL);
             const accountResponse = await axios.post('/accounts', {
                 customer_id: newCustomer.customer_id,
             });
-
-            console.log('accountResponse', accountResponse);
 
             if (accountResponse.status != 'success') {
                 throw new ServerError('Error in creating account');
