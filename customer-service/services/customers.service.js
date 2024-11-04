@@ -44,10 +44,17 @@ class CustomerService {
 
             const accountServiceURL = await getServiceUrl(process.env.APP_ID_ACCOUNT_SERVICE);
 
-            const axios = new Axios(accountServiceURL);
-            const accountResponse = await axios.post('/accounts', {
-                customer_id: newCustomer.customer_id,
-            });
+            let accountResponse;
+
+            try {
+                const axios = new Axios(accountServiceURL);
+                accountResponse = await axios.post('/', {
+                    customer_id: newCustomer.customer_id
+                });
+            } catch (error) {
+                console.log('Error in creating account', error);
+                throw new ServerError('Error in creating account');
+            }
 
             if (accountResponse.status != 'success') {
                 throw new ServerError('Error in creating account');

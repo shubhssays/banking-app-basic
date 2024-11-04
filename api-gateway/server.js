@@ -4,12 +4,6 @@ const { createProxyMiddleware } = require('http-proxy-middleware');
 
 const app = express();
 
-// Logging middleware
-app.use((req, res, next) => {
-    console.log(`Request: ${req.method} ${req.originalUrl}`);
-    next();
-});
-
 // Proxy for User Service
 app.use('/accounts', createProxyMiddleware({
     target: 'http://localhost:3001',
@@ -21,7 +15,7 @@ app.use('/accounts', createProxyMiddleware({
 app.use('/customers', createProxyMiddleware({
     target: 'http://localhost:3002',
     changeOrigin: true,
-    pathRewrite: { '^/customers': '' }, 
+    pathRewrite: { '^/customers': '' },
 }));
 
 app.listen(process.env.PORT, () => {
