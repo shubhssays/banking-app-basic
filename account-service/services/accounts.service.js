@@ -12,19 +12,22 @@ class AccountService {
             attributes: ['account_id', 'balance']
         });
 
+        const finalAmount = Number(account.balance) + amount;
+
         if (!account) {
             throw new ClientError('Account not found');
         }
 
         // Add money to account
         await AccountsModel.update({
-            balance: account.balance + amount
+            balance: finalAmount
         }, {
-            where: { account_id }
+            where: { account_id: account.account_id }
         });
 
         return {
-            message: 'Money added successfully'
+            message: 'Money added successfully',
+            available_balance: finalAmount,
         }
     }
 
@@ -49,14 +52,17 @@ class AccountService {
 
         // Deduct money from account
 
+        const finalAmount = Number(account.balance) - amount;
+
         await AccountsModel.update({
-            balance: account.balance - amount
+            balance: finalAmount
         }, {
-            where: { account_id }
+            where: { account_id: account.account_id }
         });
 
         return {
-            message: 'Money deducted successfully'
+            message: 'Money deducted successfully',
+            available_balance: finalAmount,
         }
     }
 
@@ -101,8 +107,6 @@ class AccountService {
         const delResp = await AccountsModel.destroy({
             where: { account_id: account.account_id }
         });
-
-        console.log('delResp', delResp);
 
         return {
             message: 'Account deleted successfully'
