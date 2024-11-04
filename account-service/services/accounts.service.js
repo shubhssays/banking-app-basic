@@ -1,5 +1,6 @@
 const ClientError = require("../errors/client.error");
 const AccountsModel = require("../config/models/accounts.model");
+const { Op } = require('sequelize');
 
 class AccountService {
     static async addMoney(userInput) {
@@ -83,7 +84,12 @@ class AccountService {
 
         // Check if account exists  
         const account = await AccountsModel.findOne({
-            where: { account_id },
+            where: {
+                [Op.or]: [
+                    { account_id },
+                    { customer_id: account_id }
+                ]
+            },
             attributes: ['account_id']
         });
 
@@ -92,9 +98,11 @@ class AccountService {
         }
 
         // Delete account
-        await AccountsModel.destroy({
-            where: { account_id }
+        const delResp = await AccountsModel.destroy({
+            where: { account_id: account.account_id }
         });
+
+        console.log('delResp', delResp);
 
         return {
             message: 'Account deleted successfully'

@@ -82,6 +82,7 @@ class CustomerService {
         const customers = await CustomersModel.findAndCountAll({
             limit,
             offset,
+            order: [['created_at', 'DESC']]
         });
 
         if (customers.count == 0) {
@@ -184,6 +185,22 @@ class CustomerService {
 
         if (!customer) {
             throw new ClientError('Customer not found');
+        }
+
+        const accountServiceURL = await getServiceUrl(process.env.APP_ID_ACCOUNT_SERVICE);
+
+        let accountResponse;
+
+        try {
+            const axios = new Axios(accountServiceURL);
+            accountResponse = await axios.delete(`/${customer_id}`);
+        } catch (error) {
+            console.log('Error in deleting account', error);
+            throw new ServerError('Error in deleting account');
+        }
+
+        if (accountResponse.status != 'success') {
+            throw new ServerError('Error in deleting account');
         }
 
         await customer.destroy();
