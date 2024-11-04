@@ -12,11 +12,12 @@ class AccountService {
             attributes: ['account_id', 'balance']
         });
 
-        const finalAmount = Number(account.balance) + amount;
 
         if (!account) {
             throw new ClientError('Account not found');
         }
+
+        const finalAmount = Number(account.balance) + amount;
 
         // Add money to account
         await AccountsModel.update({

@@ -3,15 +3,13 @@
 module.exports = {
   async up(queryInterface, Sequelize) {
     try {
-      // Enable pgcrypto extension for UUID generation
-      await queryInterface.sequelize.query('CREATE EXTENSION IF NOT EXISTS "pgcrypto";');
       
       // Create customers table
       await queryInterface.createTable('customers', {
         customer_id: {
           type: Sequelize.UUID,
           primaryKey: true,
-          defaultValue: Sequelize.literal('gen_random_uuid()')
+          defaultValue: Sequelize.UUIDV4  // Use Sequelize's UUIDV4 generator
         },
         first_name: {
           type: Sequelize.STRING(255),
@@ -54,12 +52,12 @@ module.exports = {
         created_at: {
           type: Sequelize.DATE,
           allowNull: false,
-          defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+          defaultValue: Sequelize.NOW  // Use Sequelize.NOW for current timestamp
         },
         updated_at: {
           type: Sequelize.DATE,
           allowNull: false,
-          defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+          defaultValue: Sequelize.NOW  // Use Sequelize.NOW for current timestamp
         }
       });
       
