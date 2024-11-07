@@ -1,15 +1,15 @@
-require('dotenv').config();
 const express = require('express');
 const { createProxyMiddleware } = require('http-proxy-middleware');
 const { getServiceUrl } = require('./utils/eurekaHelper');
+const config = require('config');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = config.get('port');
 
 async function setupProxy() {
     // Fetch URLs asynchronously
-    const customerServiceUrl = await getServiceUrl(process.env.APP_ID_CUSTOMER_SERVICE);
-    const accountServiceUrl = await getServiceUrl(process.env.APP_ID_ACCOUNT_SERVICE);
+    const customerServiceUrl = await getServiceUrl(config.get('appIdCustomerService'));
+    const accountServiceUrl = await getServiceUrl(config.get('appIdAccountService'));
 
     // Proxy for User Service
     app.use('/accounts', createProxyMiddleware({

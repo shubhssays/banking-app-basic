@@ -1,0 +1,15 @@
+{
+    "port": "3002",
+    "database": {
+        "host": "localhost",
+        "db": "banking_customers",
+        "username": "postgres",
+        "password": "change-me"
+    },
+    "eureka": {
+        "host": "localhost",
+        "port": "8761"
+    },
+    "appName": "customer-service",
+    "appIdAccountService": "account-service"
+}

@@ -5,6 +5,7 @@ const { Op } = require('sequelize');
 const GeneralError = require("../errors/general.error");
 const { getServiceUrl } = require('../eurekaHelper');
 const Axios = require('../utils/axios');
+const config = require('config');
 
 class CustomerService {
     static async addCustomer(userInput) {
@@ -42,7 +43,7 @@ class CustomerService {
                 country
             }, { transaction });
 
-            const accountServiceURL = await getServiceUrl(process.env.APP_ID_ACCOUNT_SERVICE);
+            const accountServiceURL = await getServiceUrl(config.get("appIdAccountService"));
 
             let accountResponse;
 
@@ -101,8 +102,6 @@ class CustomerService {
     static async updateCustomer(userInput) {
         const { customer_id, first_name, last_name, email, phone_number, street, city, state, zip_code, country } = userInput;
 
-        console.log('userInput', userInput);
-
         // Check if customer exists
         const customer = await CustomersModel.findOne({
             where: { customer_id },
@@ -116,8 +115,6 @@ class CustomerService {
         const condition = [];
         if (email) condition.push({ email })
         if (phone_number) condition.push({ phone_number })
-
-        console.log('condition', condition);
 
         if (condition.length > 0) {
             // Check for duplicate entry based on email and phone number
@@ -187,7 +184,7 @@ class CustomerService {
             throw new ClientError('Customer not found');
         }
 
-        const accountServiceURL = await getServiceUrl(process.env.APP_ID_ACCOUNT_SERVICE);
+        const accountServiceURL = await getServiceUrl(config.get("appIdAccountService"));
 
         let accountResponse;
 

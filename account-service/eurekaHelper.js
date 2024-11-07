@@ -1,22 +1,19 @@
-require('dotenv').config();
 const { Eureka } = require('eureka-js-client');
+const config = require('config');
 
-const instanceId = process.env.APP_NAME;
+const instanceId = config.get('appName');
 const vipAddress = `${instanceId}-vip`;
-
-console.log('instanceId', instanceId);
-console.log('vipAddress', vipAddress);
 
 // Configure the Eureka eurekaClient instance
 const eurekaClient = new Eureka({
     instance: {
-        app: process.env.APP_NAME, // Name of your service
+        app: instanceId, // Name of your service
         instanceId, // Unique ID for the instance
         hostName: 'localhost',
         ipAddr: '127.0.0.1',
-        statusPageUrl: `http://localhost:${process.env.PORT}/health/status`, // URL for the health/status page
+        statusPageUrl: `http://localhost:${config.get("port")}/health/status`, // URL for the health/status page
         port: {
-            '$': process.env.PORT, // Port your service is running on
+            '$': config.get("port"), // Port your service is running on
             '@enabled': true,
         },
         vipAddress, // Virtual IP address used for discovery
@@ -27,8 +24,8 @@ const eurekaClient = new Eureka({
     },
     eureka: {
         // Eureka server configuration
-        host: 'localhost', // Host where Eureka server is running
-        port: 8761, // Port where Eureka server is running
+        host: config.get("eureka.host"), // Host where Eureka server is running
+        port: config.get("eureka.port"), // Port where Eureka server is running
         servicePath: '/eureka/apps/', // Default service path
     },
 });

@@ -1,9 +1,9 @@
 
 const Axios = require('./axios');
-const axios = new Axios(process.env.EUREKA_SERVER_URL);
+const config = require('config');
 
 async function getServiceUrl(serviceName, pickOne = true) {
-    const axios = new Axios(`http://${process.env.EUREKA_SERVER_HOST}:${process.env.EUREKA_SERVER_PORT}`);
+    const axios = new Axios(`http://${config.get("eureka.host")}:${config.get("eureka.port")}`);
     const response = await axios.get(`/eureka/apps/${serviceName}`);
     if(pickOne) {
         return `http://${response.application.instance[0].hostName}:${response.application.instance[0].port['$']}`;

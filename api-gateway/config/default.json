@@ -1,0 +1,9 @@
+{
+    "port": "3000",
+    "eureka": {
+        "host": "localhost",
+        "port": "8761"
+    },
+    "appIdCustomerService": "customer-service",
+    "appIdAccountService": "account-service"
+}

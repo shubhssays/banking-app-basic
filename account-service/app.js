@@ -1,10 +1,12 @@
-require("dotenv").config();
 const express = require("express");
 const logger = require("morgan");
 const bodyParser = require("body-parser");
+const config = require("config");
 
 //set up express app
 const app = express();
+
+const PORT = config.get("port");
 
 //Log requests to the console
 app.use(logger("dev"));
@@ -34,8 +36,8 @@ app.use("/", require("./routes/accounts.routes"));
 // this should be the last route
 require("./routes/error.routes")(app);
 
-app.listen(process.env.PORT, () => {
-    console.log(`Account Service is running on PORT ${process.env.PORT}`);
+app.listen(PORT, () => {
+    console.log(`Account Service is running on PORT ${PORT}`);
 });
 
 process.on("unhandledRejection", (reason, promise) => {
