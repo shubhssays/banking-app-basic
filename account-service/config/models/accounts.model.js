@@ -4,7 +4,7 @@ const sequelize = require('./index'); // Adjust path as needed
 const Account = sequelize.define('Account', {
     account_id: {
         type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4, // Use UUIDV4 for Sequelize's UUID generation
+        defaultValue: DataTypes.UUIDV4,
         primaryKey: true,
     },
     customer_id: {
@@ -31,7 +31,7 @@ const Account = sequelize.define('Account', {
     }
 }, {
     tableName: 'accounts',
-    timestamps: false // Disable Sequelize automatic timestamp fields
+    timestamps: false
 });
 
 module.exports = Account;
